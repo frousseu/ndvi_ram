@@ -69,14 +69,30 @@ library(terra)
 #plot(st_transform(st_as_sf(ram),st_crs(r)),add=TRUE)
 #plot(st_geometry(st_transform(tile,st_crs(r))),add=TRUE,lwd=5,border="red")
 
+#r1<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2018_009.tif")
+
+#r2<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2015_137.tif")
+
+#r3<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2023_041.tif")
 
 
+### compare 06 and 061
+# 061 seems a bit less noisy with less extreme variations than 06, but overall I'm not sure it would make a big difference
+#x1<-list.files("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/NDVI",full=TRUE,pattern=".tif")
+#x2<-list.files("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v61/NDVI",full=TRUE,pattern=".tif")
+#x1<-x1[basename(x1)%in%basename(x2)]
 
-r1<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2018_009.tif")
+#r1<-rast(x1)
+#r2<-rast(x2)
 
-r2<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2015_137.tif")
+#gd<-function(x){
+#  as.Date(substr(x,nchar(x)-7,nchar(x)),format="%Y_%j")
+#}
 
-r3<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual/MYD13A1_QA_qual_2023_041.tif")
+#i<-sample(ncell(r1),1)
+#i
+#plot(gd(names(r1)),extract(r1,i),cex=2,col=adjustcolor("darkgreen",0.5),lwd=5)
+#points(gd(names(r2)),extract(r2,i),pch=3,cex=2,col=adjustcolor("navyblue",0.5),lwd=5)
 
 
 # Setting options here in the script with MODIStsp seems to lead to many problems with where the files are stored (stored in spafile!!!). It is better to change what's in the .json opts file and run it without overwriting options here in the script or even better use the interactive MODIStsp() UI and load the .json opts from there.
@@ -434,44 +450,15 @@ pol<-st_transform(ram,st_crs(modis))
 #registerDoParallel(no_cores)
 #getDoParWorkers()
 
-lpaths<-c(
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/DOY",                                          
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/EVI",                                          
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/NDVI",                                         
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/QA_qual",                                      
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/QA_usef",                                      
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/Rely", 
-    "S:/NDVI/MODIS/VI_16Days_500m_v6/VI_QA",
-    "S:/NDVI/MODIS/Snow_Cov_8-Day_500m_v6/MAX_SNW",                                 
-    "S:/NDVI/MODIS/Snow_Cov_8-Day_500m_v6/SC_8DAY_bitfield", 
-    "S:/NDVI/MODIS/LAI_8Days_500m_v6/Fpar",                                         
-    "S:/NDVI/MODIS/LAI_8Days_500m_v6/Lai",
-    "S:/NDVI/MODIS/Gross_PP_8Days_500m_v6/GPP",                                     
-    "S:/NDVI/MODIS/Gross_PP_8Days_500m_v6/PsnNet")
-lpaths<-c(
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/DOY",                                          
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/EVI",                                          
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/NDVI",                                         
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/QA_qual",                                      
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/QA_usef",                                      
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/Rely", 
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/VI_16Days_500m_v6/VI_QA",
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/Snow_Cov_8-Day_500m_v6/MAX_SNW",                                 
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/Snow_Cov_8-Day_500m_v6/SC_8DAY_bitfield", 
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/LAI_8Days_500m_v6/Fpar",                                         
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/LAI_8Days_500m_v6/Lai",
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/Gross_PP_8Days_500m_v6/GPP",                                     
-    "/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/Gross_PP_8Days_500m_v6/PsnNet")
-
 
 lpaths<-c(
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/DOY",                                          
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/EVI",                                          
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/NDVI",                                         
-  "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual",                                      
-  "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_usef",                                      
+  #"//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_qual",                                      
+  #"//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/QA_usef",                                      
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/Rely", 
-  "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/VI_QA",
+  #"//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/VI_16Days_500m_v6/VI_QA",
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/Snow_Cov_8-Day_500m_v6/MAX_SNW",                                 
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/Snow_Cov_8-Day_500m_v6/SC_8DAY_bitfield", 
   "//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/LAI_8Days_500m_v6/Fpar",                                         
@@ -493,8 +480,10 @@ x<-lapply(lpaths,function(i){
 })
 
 
-rr<-rast(sample(list.files(lpaths[2],pattern=".tif",full=TRUE),100))#[827:828])
+rs<-sample(list.files(lpaths[4],pattern=".tif",full=TRUE),100)
+rr<-rast(rs)#[827:828])
 rr
+
 
 
 
@@ -504,11 +493,11 @@ registerDoSNOW(cl)
 lr<-vector(mode="list",length=length(lpaths))
 names(lr)<-sapply(strsplit(lpaths,"/"),tail,1)
 
-#for(i in 1:length(lpaths)){
-for(i in c(3,4,5,6,7)){
+for(i in 1:length(lpaths)){
+#for(i in c(1,3,4)){
     l<-list.files(lpaths[i],full.names=TRUE,pattern=".tif")
     jj<-substr(l,nchar(l)-11,nchar(l)-4)
-    l<-l[jj>="2005_001" & jj<="2012_001"] # for a tiny subset######################
+    l<-l[jj>="2000_001" & jj<="2023_001"] # for a tiny subset######################
     g<-grep("MCD15",l)
     if(any(g)){  
         l<-l[-g]
@@ -746,7 +735,7 @@ legend("top",legend=flagsl,col=cols[seq_along(flags)],pch=16,cex=1.5,horiz=TRUE,
 ts<-c("ndvi","evi","lai","gpp","snow","psnnet","fpar")
 
 #mod LAR
-#ts=c("ndvi","evi")
+#ts=c("ndvi")
 #ts<-c("gpp","snow","psnnet","fpar","lai")
 
 
@@ -776,6 +765,9 @@ peak_cell<-lapply(ts,function(i){
         ### Values
         val<-get(type)[[1]][j,] # divide by 1 for gimms data and by 10000 for modis data
         rel<-get("rely")[[1]][j,]
+        if(ts%in%c("ndvi","evi")){
+          val[which(rel%in%c(2,3))]<-NA # remove values that were cloud covered
+        }
         #val<-gpp[[i]][j,]/divide # divide by 1 for gimms data and by 10000 for modis data
         if(all(is.na(val))){
             val[seq_along(val)]<-0  
@@ -859,7 +851,7 @@ peak_cell<-lapply(ts,function(i){
               points(as.Date(names(val))[k],val[k],col=cols_flags[ii],pch=16,cex=1)
             })
             flagsl<-ifelse(is.na(flags),"NA",flags)
-            legend("topright",,title="Reliability",legend=flagsl,col=cols_flags[seq_along(flags)],pch=16,cex=1,horiz=TRUE,bty="n",inset=c(0,0),xpd=TRUE)
+            legend("topright",title="Reliability",legend=flagsl,col=cols_flags[seq_along(flags)],pch=16,cex=1,horiz=TRUE,bty="n",inset=c(0,0),xpd=TRUE)
             
             
         }
@@ -1086,7 +1078,7 @@ peak_cell<-lapply(ts,function(i){
           
             axis.Date(1,at=log_up,las=2,cex.axis=0.7,col.axis=mcols$up_mid,format="%b-%d",line=-3)
             axis.Date(1,at=log_do,las=2,cex.axis=0.7,col.axis=mcols$do_mid,format="%b-%d",line=-3)
-            abline(median(val,na.rm=TRUE),0)
+            #abline(median(val,na.rm=TRUE),0)
         
             #points(ans$sg_up,h_up,col="red",pch=16)
             #points(ans$sg_do,h_do,col="red",pch=16)
@@ -1108,7 +1100,7 @@ peak_cell<-lapply(ts,function(i){
             points(ans$log_do_end2,ans$log_do_end2_y,col=mcols$do_beg2,pch=16,cex=2)
             
             
-            abline(as.list(mLog[[1]])$wNDVI,0)
+            #abline(as.list(mLog[[1]])$wNDVI,0)
             
             leg<-c("max 1st deriv","max 2nd deriv","max 3th deriv","max reach")
             col<-c(mcols$up_mid,mcols$up_beg,mcols$up_beg2,mcols$max_reach)  
