@@ -7,6 +7,6 @@ library(MODIStsp)
 MODIStsp()
 ```
 
-The dates, the username, the password and the paths have to be updated in the .json file prior to loading the file (some functionalities do not work well, e.g. when searching for the path to the UdS NDVI server path). Some functions within the MODIStsp package could be used to directly download the data through a script, but some thing are buggy and do no seem to work well (dates, extent not respected).Thus the interactive UI has to be used for the download.
+The dates, the username, the password and the paths have to be updated in the .json file prior to loading the file (some functionalities do not work well, e.g. when searching for the path to the UdS NDVI server path). Be careful not to upload the password when commiting files to GitHub! Some functions within the MODIStsp package could be used to directly download the data through a script, but some thing are buggy and do no seem to work well (dates, extent not respected).Thus the interactive UI has to be used for the download.
 
 The rest is in the get_metrics.r script that will produce a .csv file with the phenology values.
