@@ -225,7 +225,7 @@ fitDLog<-function(x,mmdate=c("12-15","03-01"),plot=FALSE,type="ndvi",...){
         min_S<-as.integer(as.Date(paste0(yy,"-04-01")))
         max_S<-as.integer(as.Date(paste0(yy,"-06-15")))
         
-        min_A<-as.integer(as.Date(paste0(yy,"-09-30")))
+        min_A<-as.integer(as.Date(paste0(yy,"-08-15"))) # 09-30
         max_A<-as.integer(as.Date(paste0(yy,"-12-15")))
         
         ### Beck's et al. (2006) parametrisation 
@@ -298,6 +298,7 @@ getDates<-function(x){
 # w<-raster("S:/NDVI/MODIS/083b05/083b05_0201_demw.dem")
 #e<-raster("/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/083b05/083b05_0201_deme.dem")
 #w<-raster("/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/data/raw/MODIS/083b05/083b05_0201_demw.dem")
+
 e<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/083b05/083b05_0201_deme.dem")
 w<-rast("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/083b05/083b05_0201_demw.dem")
 alt<-merge(e,w)
@@ -487,7 +488,7 @@ rr
 
 
 
-cl <- makeCluster(6) # do not use all cores otherwise too much memory may be used
+cl <- makeCluster(4) # do not use all cores otherwise too much memory may be used
 registerDoSNOW(cl)
 
 lr<-vector(mode="list",length=length(lpaths))
@@ -751,7 +752,7 @@ peak_cell<-lapply(ts,function(i){
         
         #i<-sample(ts,1)
         
-        pl<-TRUE# for plotting or not
+        pl<-FALSE# for plotting or not
         pdfs<-FALSE
         cell<-(-sample(1:nrow(get(i)[[1]]),1))
         
@@ -765,8 +766,8 @@ peak_cell<-lapply(ts,function(i){
         ### Values
         val<-get(type)[[1]][j,] # divide by 1 for gimms data and by 10000 for modis data
         rel<-get("rely")[[1]][j,]
-        if(ts%in%c("ndvi","evi")){
-          val[which(rel%in%c(2,3))]<-NA # remove values that were cloud covered
+        if(i%in%c("ndvi","evi")){
+          #val[which(rel%in%c(2,3))]<-NA # remove values that were cloud covered
         }
         #val<-gpp[[i]][j,]/divide # divide by 1 for gimms data and by 10000 for modis data
         if(all(is.na(val))){
@@ -1182,13 +1183,17 @@ speed<-as.data.frame(Reduce(function(x,y){merge(x,y,all=TRUE)},speed))
 peaks2<-cbind(peaks, speed[,-1])
 
 #fwrite(peaks2,paste0("/Users/LimoilouARenaud/Documents/Projects/NDVI.nosync/output/data/peaks_speed_",substr(Sys.time(),1,10),".csv"),row.names=FALSE)
-#fwrite(peaks2,paste0("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/peaks_ram_",substr(Sys.time(),1,10),".csv"),row.names=FALSE)
+fwrite(peaks2,paste0("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/peaks_ram_",substr(Sys.time(),1,10),".csv"),row.names=FALSE)
 
+
+#x<-read.csv("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/peaks_ram_2023-10-06.csv")
 
 #################################
 ### graph all time series #######
 
-par(mar=c(5,4,5,2))
+png(paste0("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/peaks_ram_",substr(Sys.time(),1,10),".png"),width=12,heigh=12,res=400,units="in")
+
+par(mar=c(5,5,5,2))
 plot(as.integer(format(peaks[,2],"%j")),peaks$year,xlim=range(as.integer(format(peaks[,-1],"%j")),na.rm=TRUE),type="n",xaxt="n",yaxt="n",xlab="Dates",ylab="Year")
 
 dates<-seq.Date(as.Date("2000-01-01"),as.Date("2001-01-01"),by="day")
@@ -1204,8 +1209,11 @@ invisible(lapply(metrics,function(i){
     lines(as.integer(format(peaks[,..i],"%j")),peaks$year,type="b",lwd=5,col=alpha(cols[[tsval]],0.75))   
 }))
 
-legend("top",cex=1.15,lwd=5,legend=paste(names(cols),"-",lts),col=alpha(unlist(cols),0.75),bty="n",inset=c(-0.1,-0.15),ncol=3,xpd=TRUE)
+legend("top",cex=1.15,lwd=5,legend=paste(names(cols),"-",lts),col=alpha(unlist(cols),0.75),bty="n",inset=c(-0.1,-0.11),ncol=2,xpd=TRUE)
 axis(2,at=peaks$year,las=2,mgp=c(2,0.35,0),tcl=-0.2)
+
+dev.off()
+file.show(paste0("//dinf-bruselin.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/NDVI/MODIS/peaks_ram_",substr(Sys.time(),1,10),".png"))
 
 ##########################################
 ### map values to rasters ################
