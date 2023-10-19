@@ -1172,7 +1172,7 @@ speed<-lapply(ts,function(i){
     x<-rbindlist(peak_cell[[match(i,ts)]])#[,c("year","max_speed")] 
     cols<-names(x)[-1]
     cols<-cols[grep("_y|_speed",cols)]
-    x[,(cols):=list(as.numeric(max_speed))]
+    #x[,(cols):=list(as.numeric(max_speed))] # not sure why that was there, it replaced all values with the ones for max_speed
     x<-x[,lapply(.SD,function(j){mean(j,na.rm=TRUE)}),by=year,.SDcols=cols] # problem here!
     names(x)[-1]<-paste(i,names(x)[-1],sep="_")
     x
